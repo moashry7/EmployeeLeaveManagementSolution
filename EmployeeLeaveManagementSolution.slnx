@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="EmployeeLeaveManagement/EmployeeLeaveManagementWeb.csproj" />
+  <Project Path="EmployeeLeaveManagementBBL/EmployeeLeaveManagementBLL.csproj" />
+  <Project Path="EmployeeLeaveManagementDAL/EmployeeLeaveManagementDAL.csproj" />
+  <Project Path="EmployeeLeaveManagementEntities/EmployeeLeaveManagementEntities.csproj" />
+</Solution>
