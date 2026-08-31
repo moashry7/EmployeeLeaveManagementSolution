@@ -16,8 +16,9 @@ namespace EmployeeLeaveManagementEntities.Entities
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public LeaveRequestStatus Status { get; set; }
-        public int ApprovedById { get; set; }
-       
+        public int? ApprovedById { get; set; }
+        public Employee ApprovedBy { get; set; } = null!;
+
 
     }
 
