@@ -15,6 +15,7 @@ namespace EmployeeLeaveManagementDAL.Extensions
                 options.UseSqlServer(connectionString));
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
         }
