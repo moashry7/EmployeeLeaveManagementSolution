@@ -1,4 +1,6 @@
 ﻿using EmployeeLeaveManagementDAL.Data.Dbcontext;
+using EmployeeLeaveManagementDAL.Data.Repositories.Implementation;
+using EmployeeLeaveManagementDAL.Data.Repositories.interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 namespace EmployeeLeaveManagementDAL.Extensions
@@ -11,6 +13,8 @@ namespace EmployeeLeaveManagementDAL.Extensions
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
+
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
             return services;
         }
