@@ -3,6 +3,7 @@ using EmployeeLeaveManagementDAL.Data.Repositories.Implementation;
 using EmployeeLeaveManagementDAL.Data.Repositories.interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+
 namespace EmployeeLeaveManagementDAL.Extensions
 {
     public static class ServiceCollectionExtensions
@@ -16,6 +17,7 @@ namespace EmployeeLeaveManagementDAL.Extensions
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            
 
             return services;
         }
