@@ -22,7 +22,7 @@ namespace EmployeeLeaveManagementDAL.Data.Repositories.Implementation
                 var repo = new Repository<TEntity>(_dbContext);
                 _repositories[typeName] = repo;
                 return repo;
-            } 
+            }
 
         }
 
