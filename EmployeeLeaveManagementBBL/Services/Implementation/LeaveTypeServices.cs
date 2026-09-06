@@ -1,9 +1,7 @@
-﻿using EmployeeLeaveManagementBLL.Services.Interfaces;
+﻿using EmployeeLeaveManagementBLL.Exceptions;
+using EmployeeLeaveManagementBLL.Services.Interfaces;
 using EmployeeLeaveManagementDAL.Data.Repositories.interfaces;
 using EmployeeLeaveManagementEntities.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EmployeeLeaveManagementBLL.Services.Implementation
 {
@@ -19,24 +17,31 @@ namespace EmployeeLeaveManagementBLL.Services.Implementation
         public async Task AddAsync(LeaveType leaveType, CancellationToken ct = default)
         {
             _unitOfWork.GetRepository<LeaveType>().Add(leaveType);
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync(ct);
         }
-
-        public async Task DeleteAsync(LeaveType leaveType, CancellationToken ct = default)
-        {
-            _unitOfWork.GetRepository<LeaveType>().Delete(leaveType);
-            await _unitOfWork.SaveChangesAsync();
-        }
-
-        public async Task<IEnumerable<LeaveType>> GetAllAsync(CancellationToken ct = default) => await _unitOfWork.GetRepository<LeaveType>().GetAllAsync(ct);
-
-
-        public async Task<LeaveType?> GetByIdAsync(int id, CancellationToken ct = default) => await _unitOfWork.GetRepository<LeaveType>().GetByIdAsync(id, ct);
 
         public async Task UpdateAsync(LeaveType leaveType, CancellationToken ct = default)
         {
             _unitOfWork.GetRepository<LeaveType>().Update(leaveType);
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync(ct);
         }
+
+        public async Task DeleteAsync(LeaveType leaveType, CancellationToken ct = default)
+        {
+            var hasLeaveRequests = await _unitOfWork.GetRepository<LeaveRequest>()
+                .FindAsync(lr => lr.LeaveTypeId == leaveType.Id, ct);
+
+            if (hasLeaveRequests.Any())
+                throw new BusinessRuleException("Cannot delete a leave type that has existing leave requests.");
+
+            _unitOfWork.GetRepository<LeaveType>().Delete(leaveType);
+            await _unitOfWork.SaveChangesAsync(ct);
+        }
+
+        public Task<IEnumerable<LeaveType>> GetAllAsync(CancellationToken ct = default) =>
+            _unitOfWork.GetRepository<LeaveType>().GetAllAsync(ct);
+
+        public Task<LeaveType?> GetByIdAsync(int id, CancellationToken ct = default) =>
+            _unitOfWork.GetRepository<LeaveType>().GetByIdAsync(id, ct);
     }
 }

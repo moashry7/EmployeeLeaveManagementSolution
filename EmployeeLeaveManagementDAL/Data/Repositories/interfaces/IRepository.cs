@@ -1,4 +1,6 @@
-﻿namespace EmployeeLeaveManagementDAL.Data.Repositories.interfaces
+﻿using System.Linq.Expressions;
+
+namespace EmployeeLeaveManagementDAL.Data.Repositories.interfaces
 {
     public interface IRepository<TEntity> where TEntity : class
     {
@@ -7,6 +9,8 @@
         void Add(TEntity entity);
         void Update(TEntity entity);
         void Delete(TEntity entity);
+        Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken ct = default);
+        IQueryable<TEntity> Query();
 
     }
 }

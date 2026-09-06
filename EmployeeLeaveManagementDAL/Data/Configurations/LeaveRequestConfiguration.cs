@@ -32,6 +32,7 @@ namespace EmployeeLeaveManagementDAL.Data.Configurations
             builder.HasOne(lr => lr.ApprovedBy)
                    .WithMany()
                    .HasForeignKey(lr => lr.ApprovedById)
+                   .IsRequired(false)
                    .OnDelete(DeleteBehavior.Restrict);
 
 

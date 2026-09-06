@@ -3,6 +3,7 @@ using EmployeeLeaveManagementDAL.Data.Repositories.interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace EmployeeLeaveManagementDAL.Data.Repositories.Implementation
@@ -22,16 +23,21 @@ namespace EmployeeLeaveManagementDAL.Data.Repositories.Implementation
 
         public void Update(TEntity entity) => _dbSet.Update(entity);
 
-      
-
         public async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken ct = default)
-        {
-            var entities = await _dbSet.ToListAsync(ct);
-            return entities;
-        }
+                => await _dbSet.ToListAsync(ct);
 
         public async Task<TEntity?> GetByIdAsync(int id, CancellationToken ct = default)
                          => await _dbSet.FindAsync(id, ct);
-         
+
+        public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken ct = default)
+              => await _dbSet.Where(predicate).ToListAsync(ct);
+
+        public IQueryable<TEntity> Query() => _dbSet.AsQueryable();
+
+
+
+
     }
+
 }
+

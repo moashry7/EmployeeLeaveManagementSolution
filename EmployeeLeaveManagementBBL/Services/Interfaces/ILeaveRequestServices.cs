@@ -1,7 +1,4 @@
 ﻿using EmployeeLeaveManagementEntities.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EmployeeLeaveManagementBLL.Services.Interfaces
 {
@@ -12,5 +9,8 @@ namespace EmployeeLeaveManagementBLL.Services.Interfaces
         Task AddAsync(LeaveRequest leaveRequest, CancellationToken ct = default);
         Task UpdateAsync(LeaveRequest leaveRequest, CancellationToken ct = default);
         Task DeleteAsync(LeaveRequest leaveRequest, CancellationToken ct = default);
+        Task ApproveAsync(int leaveRequestId, int approverId, CancellationToken ct = default);
+        Task RejectAsync(int leaveRequestId, int approverId, CancellationToken ct = default);
+
     }
 }

@@ -24,6 +24,7 @@ namespace EmployeeLeaveManagementDAL.Data.Configurations
             builder.HasOne(d => d.Manager)
                    .WithMany()
                    .HasForeignKey(d => d.ManagerId)
+                   .IsRequired(false)
                    .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasMany(d => d.Employees)

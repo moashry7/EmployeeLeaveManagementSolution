@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using EmployeeLeaveManagementEntities.Enums;
+
 
 namespace EmployeeLeaveManagementEntities.Entities
 {
@@ -13,6 +12,7 @@ namespace EmployeeLeaveManagementEntities.Entities
         public decimal Salary { get; set; }
         public string Phone { get; set; } = null!;
         public DateTime JoinDate { get; set; }
+        public EmployeeStatus Status { get; set; }
         public int DepartmentId { get; set; }
         public Department Department { get; set; } = null!;
         public List<LeaveRequest> LeaveRequests { get; set; } = new List<LeaveRequest>();
