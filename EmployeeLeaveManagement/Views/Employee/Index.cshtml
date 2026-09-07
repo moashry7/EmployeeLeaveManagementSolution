@@ -1,0 +1,44 @@
+﻿@model IEnumerable<EmployeeLeaveManagementWeb.ViewModels.EmployeeVM.EmployeeListVM>
+
+@{
+    ViewData["Title"] = "Employees";
+}
+
+<h1>Employees</h1>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">+ New Employee</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Department</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var employee in Model)
+        {
+            <tr>
+                <td>@employee.FullName</td>
+                <td>@employee.Email</td>
+                <td>@employee.DepartmentName</td>
+                <td>@employee.Status</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@employee.Id" class="btn btn-sm btn-info">Details</a>
+                    <a asp-action="Edit" asp-route-id="@employee.Id" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@employee.Id" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

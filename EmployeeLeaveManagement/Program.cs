@@ -1,5 +1,6 @@
-using EmployeeLeaveManagementDAL.Extensions;
 using EmployeeLeaveManagementBLL.Extensions;
+using EmployeeLeaveManagementDAL.Extensions;
+using EmployeeLeaveManagementWeb.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,7 @@ var connectionString =
 
 builder.Services.AddDataAccess(connectionString!);
 builder.Services.AddBusinessLogic();
+builder.Services.AddPresentationServices();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 

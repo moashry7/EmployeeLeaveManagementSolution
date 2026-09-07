@@ -3,6 +3,7 @@ using EmployeeLeaveManagementBLL.Services.Interfaces;
 using EmployeeLeaveManagementDAL.Data.Repositories.interfaces;
 using EmployeeLeaveManagementEntities.Entities;
 using EmployeeLeaveManagementEntities.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeLeaveManagementBLL.Services.Implementation
 {
@@ -40,12 +41,24 @@ namespace EmployeeLeaveManagementBLL.Services.Implementation
             await _unitOfWork.SaveChangesAsync(ct);
         }
 
-        public Task<IEnumerable<Employee>> GetAllAsync(CancellationToken ct = default) => _unitOfWork.GetRepository<Employee>().GetAllAsync(ct);
 
+        public async Task<IEnumerable<Employee>> GetAllAsync(CancellationToken ct = default)
+        {
+            return await _unitOfWork.GetRepository<Employee>()
+                .Query()
+                .Include(e => e.Department)
+                .ToListAsync(ct);
+        }
 
+        public async Task<Employee?> GetByIdAsync(int id, CancellationToken ct = default)
+        {
+            return await _unitOfWork.GetRepository<Employee>()
+                .Query()
+                .Include(e => e.Department)
+                .FirstOrDefaultAsync(e => e.Id == id, ct);
+        }
 
-        public Task<Employee?> GetByIdAsync(int id, CancellationToken ct = default) => _unitOfWork.GetRepository<Employee>().GetByIdAsync(id, ct);
-
+       
         public async Task UpdateAsync(Employee employee, CancellationToken ct = default)
         {
             await ValidateEmailUniqueAsync(employee.Email, employee.Id, ct);

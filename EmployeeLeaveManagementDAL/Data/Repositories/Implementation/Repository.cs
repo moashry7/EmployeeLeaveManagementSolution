@@ -1,10 +1,8 @@
 ﻿using EmployeeLeaveManagementDAL.Data.Dbcontext;
 using EmployeeLeaveManagementDAL.Data.Repositories.interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Text;
+
 
 namespace EmployeeLeaveManagementDAL.Data.Repositories.Implementation
 {
