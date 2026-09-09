@@ -70,6 +70,13 @@ namespace EmployeeLeaveManagementBLL.Services.Implementation
         }
 
 
+        
+        public async Task<IEnumerable<Employee>> GetByDepartmentAsync(int departmentId, CancellationToken ct = default)
+        {
+            return await _unitOfWork.GetRepository<Employee>()
+                .FindAsync(e => e.DepartmentId == departmentId, ct);
+        }
+
 
         #region Helper
 

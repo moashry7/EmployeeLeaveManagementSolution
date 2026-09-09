@@ -1,15 +1,14 @@
-﻿@model IEnumerable<EmployeeLeaveManagementWeb.ViewModels.EmployeeVM.EmployeeListVM>
+﻿@model IEnumerable<EmployeeLeaveManagementWeb.ViewModels.DepartmentVM.DepartmentListVM>
 
 @{
-    ViewData["Title"] = "Employees";
+    ViewData["Title"] = "Departments";
 }
-
 @await Html.PartialAsync("_QuickLinksPartial")
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="fw-bold mb-0">Employees</h1>
+    <h1 class="fw-bold mb-0">Departments</h1>
     <a asp-action="Create" class="btn btn-primary">
-        <i class="bi bi-plus-lg me-1"></i> New Employee
+        <i class="bi bi-plus-lg me-1"></i> New Department
     </a>
 </div>
 
@@ -25,36 +24,33 @@
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">
                 <tr>
-                    <th>Full Name</th>
-                    <th>Email</th>
-                    <th>Department</th>
-                    <th>Status</th>
+                    <th>Name</th>
+                    <th>Budget</th>
+                    <th>Employee Count</th>
+                    <th>Manager</th>
                     <th class="text-end">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var employee in Model)
+                @foreach (var department in Model)
                 {
                     <tr>
-                        <td class="fw-semibold">@employee.FullName</td>
-                        <td>@employee.Email</td>
-                        <td>@employee.DepartmentName</td>
+                        <td class="fw-semibold">@department.Name</td>
+                        <td>@department.Budget.ToString("C")</td>
                         <td>
-                            @{
-                                var statusClass = employee.Status.ToString() == "Active"
-                                    ? "bg-success-subtle text-success-emphasis"
-                                    : "bg-secondary-subtle text-secondary-emphasis";
-                            }
-                            <span class="badge @statusClass">@employee.Status</span>
+                            <span class="badge bg-secondary-subtle text-secondary-emphasis">
+                                @department.EmployeeCount
+                            </span>
                         </td>
+                        <td>@(department.ManagerName ?? "—")</td>
                         <td class="text-end">
-                            <a asp-action="Details" asp-route-id="@employee.Id" class="btn btn-sm btn-outline-info" title="Details">
+                            <a asp-action="Details" asp-route-id="@department.Id" class="btn btn-sm btn-outline-info" title="Details">
                                 <i class="bi bi-eye"></i>
                             </a>
-                            <a asp-action="Edit" asp-route-id="@employee.Id" class="btn btn-sm btn-outline-warning" title="Edit">
+                            <a asp-action="Edit" asp-route-id="@department.Id" class="btn btn-sm btn-outline-warning" title="Edit">
                                 <i class="bi bi-pencil"></i>
                             </a>
-                            <a asp-action="Delete" asp-route-id="@employee.Id" class="btn btn-sm btn-outline-danger" title="Delete">
+                            <a asp-action="Delete" asp-route-id="@department.Id" class="btn btn-sm btn-outline-danger" title="Delete">
                                 <i class="bi bi-trash"></i>
                             </a>
                         </td>
@@ -68,8 +64,8 @@
 @if (!Model.Any())
 {
     <div class="text-center text-muted py-5">
-        <i class="bi bi-people fs-1 d-block mb-2"></i>
-        No employees found.
+        <i class="bi bi-diagram-3 fs-1 d-block mb-2"></i>
+        No departments found.
     </div>
 }
 

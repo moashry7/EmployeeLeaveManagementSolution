@@ -43,12 +43,24 @@ namespace EmployeeLeaveManagementBLL.Services.Implementation
             await _unitOfWork.SaveChangesAsync(ct);
         }
 
-        public Task<IEnumerable<Department>> GetAllAsync(CancellationToken ct = default)
-            => _unitOfWork.GetRepository<Department>().GetAllAsync(ct);
 
-        public Task<Department?> GetByIdAsync(int id, CancellationToken ct = default)
-            => _unitOfWork.GetRepository<Department>().GetByIdAsync(id, ct);
+        public async Task<IEnumerable<Department>> GetAllAsync(CancellationToken ct = default)
+        {
+            return await _unitOfWork.GetRepository<Department>()
+                .Query()
+                .Include(d => d.Manager)
+                .Include(d => d.Employees)
+                .ToListAsync(ct);
+        }
 
+        public async Task<Department?> GetByIdAsync(int id, CancellationToken ct = default)
+        {
+            return await _unitOfWork.GetRepository<Department>()
+                .Query()
+                .Include(d => d.Manager)
+                .Include(d => d.Employees)
+                .FirstOrDefaultAsync(d => d.Id == id, ct);
+        }
         #region Helper
         private async Task ValidateBudgetCoversSalariesAsync(Department department, CancellationToken ct)
         {

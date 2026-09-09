@@ -1,0 +1,38 @@
+﻿@model EmployeeLeaveManagementWeb.ViewModels.DepartmentVM.DepartmentDetailsVM
+
+@{
+    ViewData["Title"] = "Department Details";
+}
+
+<h1>Department Details</h1>
+
+<dl class="row">
+    <dt class="col-sm-3">Name</dt>
+    <dd class="col-sm-9">@Model.Name</dd>
+
+    <dt class="col-sm-3">Budget</dt>
+    <dd class="col-sm-9">@Model.Budget.ToString("C")</dd>
+
+    <dt class="col-sm-3">Manager</dt>
+    <dd class="col-sm-9">@(Model.ManagerName ?? "—")</dd>
+
+    <dt class="col-sm-3">Employees</dt>
+    <dd class="col-sm-9">
+        @if (Model.EmployeeNames.Any())
+        {
+            <ul>
+                @foreach (var name in Model.EmployeeNames)
+                {
+                    <li>@name</li>
+                }
+            </ul>
+        }
+        else
+        {
+            <span>No employees in this department yet.</span>
+        }
+    </dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+<a asp-action="Index" class="btn btn-secondary">Back to List</a>

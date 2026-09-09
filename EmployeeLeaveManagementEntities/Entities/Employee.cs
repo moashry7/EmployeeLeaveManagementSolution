@@ -16,6 +16,8 @@ namespace EmployeeLeaveManagementEntities.Entities
         public int DepartmentId { get; set; }
         public Department Department { get; set; } = null!;
         public List<LeaveRequest> LeaveRequests { get; set; } = new List<LeaveRequest>();
+        public EmployeeRole Role { get; set; } = EmployeeRole.Employee;
+        public string PasswordHash { get; set; } = string.Empty;
 
     }
 }

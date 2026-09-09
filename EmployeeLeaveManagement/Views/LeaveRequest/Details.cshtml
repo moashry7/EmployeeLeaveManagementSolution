@@ -1,0 +1,37 @@
+﻿@model EmployeeLeaveManagementWeb.ViewModels.LeaveRequestVM.LeaveRequestDetailsVM
+
+@{
+    ViewData["Title"] = "Leave Request Details";
+}
+
+@await Html.PartialAsync("_QuickLinksPartial")
+
+<h1 class="fw-bold mb-4">Leave Request Details</h1>
+
+<div class="card border-0 shadow-sm" style="max-width: 500px;">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-5">Employee</dt>
+            <dd class="col-sm-7">@Model.EmployeeName</dd>
+
+            <dt class="col-sm-5">Leave Type</dt>
+            <dd class="col-sm-7">@Model.LeaveTypeName</dd>
+
+            <dt class="col-sm-5">Start Date</dt>
+            <dd class="col-sm-7">@Model.StartDate.ToString("yyyy-MM-dd")</dd>
+
+            <dt class="col-sm-5">End Date</dt>
+            <dd class="col-sm-7">@Model.EndDate.ToString("yyyy-MM-dd")</dd>
+
+            <dt class="col-sm-5">Status</dt>
+            <dd class="col-sm-7">@Model.Status</dd>
+
+            <dt class="col-sm-5">Approved By</dt>
+            <dd class="col-sm-7">@(Model.ApprovedByName ?? "—")</dd>
+        </dl>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+</div>

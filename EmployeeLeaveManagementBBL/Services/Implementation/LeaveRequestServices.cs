@@ -52,11 +52,27 @@ namespace EmployeeLeaveManagementBLL.Services.Implementation
             await _unitOfWork.SaveChangesAsync(ct);
         }
 
-        public Task<IEnumerable<LeaveRequest>> GetAllAsync(CancellationToken ct = default)
-            => _unitOfWork.GetRepository<LeaveRequest>().GetAllAsync(ct);
 
-        public Task<LeaveRequest?> GetByIdAsync(int id, CancellationToken ct = default)
-            => _unitOfWork.GetRepository<LeaveRequest>().GetByIdAsync(id, ct);
+        public async Task<IEnumerable<LeaveRequest>> GetAllAsync(CancellationToken ct = default) =>
+    await _unitOfWork.GetRepository<LeaveRequest>()
+        .Query()
+        .Include(lr => lr.Employee)
+            .ThenInclude(e => e.Department)
+        .Include(lr => lr.LeaveType)
+        .Include(lr => lr.ApprovedBy)
+        .ToListAsync(ct);
+
+        public async Task<LeaveRequest?> GetByIdAsync(int id, CancellationToken ct = default) =>
+            await _unitOfWork.GetRepository<LeaveRequest>()
+                .Query()
+                .Include(lr => lr.Employee)
+                    .ThenInclude(e => e.Department)
+                .Include(lr => lr.LeaveType)
+                .Include(lr => lr.ApprovedBy)
+                .FirstOrDefaultAsync(lr => lr.Id == id, ct);
+
+       
+       
 
         public async Task ApproveAsync(int leaveRequestId, int approverId, CancellationToken ct = default)
         {
@@ -125,12 +141,18 @@ namespace EmployeeLeaveManagementBLL.Services.Implementation
 
             return leaveRequest;
         }
+        
 
-        private async Task<Employee> ValidateApproverOwnsDepartmentAsync(LeaveRequest leaveRequest, int approverId, CancellationToken ct)
+
+            private async Task<Employee> ValidateApproverOwnsDepartmentAsync(LeaveRequest leaveRequest, int approverId, CancellationToken ct)
         {
             var approver = await _unitOfWork.GetRepository<Employee>().GetByIdAsync(approverId, ct);
             if (approver is null)
                 throw new BusinessRuleException("The employee responsible for approval does not exist.");
+
+            // Admin can approve/reject for any department.
+            if (approver.Role == EmployeeRole.Admin)
+                return approver;
 
             var requestingEmployee = await _unitOfWork.GetRepository<Employee>().GetByIdAsync(leaveRequest.EmployeeId, ct);
             if (requestingEmployee is null)

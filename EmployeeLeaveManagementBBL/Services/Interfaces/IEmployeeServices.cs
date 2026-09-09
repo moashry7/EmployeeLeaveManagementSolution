@@ -9,5 +9,6 @@ namespace EmployeeLeaveManagementBLL.Services.Interfaces
         Task AddAsync(Employee employee, CancellationToken ct = default);
         Task UpdateAsync(Employee employee, CancellationToken ct = default);
         Task DeleteAsync(Employee employee, CancellationToken ct = default);
+        Task<IEnumerable<Employee>> GetByDepartmentAsync(int departmentId, CancellationToken ct = default);
     }
 }

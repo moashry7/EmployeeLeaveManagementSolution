@@ -41,6 +41,14 @@ namespace EmployeeLeaveManagementDAL.Data.Configurations
                    .HasForeignKey(e => e.DepartmentId)
                    .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Property(e => e.Role)
+                   .IsRequired()
+                   .HasConversion<int>();
+
+            builder.Property(e => e.PasswordHash)
+                   .IsRequired()
+                   .HasMaxLength(500);
+
 
         }
     }

@@ -3,11 +3,13 @@ using EmployeeLeaveManagementBLL.Exceptions;
 using EmployeeLeaveManagementBLL.Services.Interfaces;
 using EmployeeLeaveManagementEntities.Entities;
 using EmployeeLeaveManagementWeb.ViewModels.EmployeeVM;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EmployeeLeaveManagementWeb.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class EmployeeController : Controller
     {
         private readonly IEmployeeServices _employeeServices;

@@ -2,6 +2,7 @@
 using EmployeeLeaveManagementBLL.Services.Interfaces;
 using EmployeeLeaveManagementDAL.Data.Repositories.interfaces;
 using EmployeeLeaveManagementEntities.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeLeaveManagementBLL.Services.Implementation
 {
@@ -38,10 +39,16 @@ namespace EmployeeLeaveManagementBLL.Services.Implementation
             await _unitOfWork.SaveChangesAsync(ct);
         }
 
-        public Task<IEnumerable<LeaveType>> GetAllAsync(CancellationToken ct = default) =>
-            _unitOfWork.GetRepository<LeaveType>().GetAllAsync(ct);
+        public async Task<IEnumerable<LeaveType>> GetAllAsync(CancellationToken ct = default) =>
+            await _unitOfWork.GetRepository<LeaveType>()
+                .Query()
+                .Include(lt => lt.LeaveRequests)
+                .ToListAsync(ct);
 
-        public Task<LeaveType?> GetByIdAsync(int id, CancellationToken ct = default) =>
-            _unitOfWork.GetRepository<LeaveType>().GetByIdAsync(id, ct);
+        public async Task<LeaveType?> GetByIdAsync(int id, CancellationToken ct = default) =>
+            await _unitOfWork.GetRepository<LeaveType>()
+                .Query()
+                .Include(lt => lt.LeaveRequests)
+                .FirstOrDefaultAsync(lt => lt.Id == id, ct);
     }
 }

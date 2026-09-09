@@ -1,0 +1,116 @@
+﻿@model IEnumerable<EmployeeLeaveManagementWeb.ViewModels.LeaveRequestVM.LeaveRequestListVM>
+@using EmployeeLeaveManagementEntities.Enums
+
+@{
+    ViewData["Title"] = "Leave Requests";
+    var currentRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+    var canApprove = currentRole == "Manager" || currentRole == "Admin";
+    var isAdmin = currentRole == "Admin";
+}
+
+@await Html.PartialAsync("_QuickLinksPartial")
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="fw-bold mb-0">Leave Requests</h1>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-lg me-1"></i> New Leave Request
+    </a>
+</div>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger d-flex align-items-center">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+    </div>
+}
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Employee</th>
+                    @if (isAdmin)
+                    {
+                        <th>Department</th>
+                    }
+                    <th>Leave Type</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var request in Model)
+                {
+                    var statusClass = request.Status switch
+                    {
+                        LeaveRequestStatus.Approved => "bg-success-subtle text-success-emphasis",
+                        LeaveRequestStatus.Rejected => "bg-danger-subtle text-danger-emphasis",
+                        _ => "bg-warning-subtle text-warning-emphasis"
+                    };
+
+                    <tr>
+                        <td class="fw-semibold">@request.EmployeeName</td>
+                        @if (isAdmin)
+                        {
+                            <td>@request.DepartmentName</td>
+                        }
+                        <td>@request.LeaveTypeName</td>
+                        <td>@request.StartDate.ToString("yyyy-MM-dd")</td>
+                        <td>@request.EndDate.ToString("yyyy-MM-dd")</td>
+                        <td><span class="badge @statusClass">@request.Status</span></td>
+                        <td class="text-end">
+                            <a asp-action="Details" asp-route-id="@request.Id" class="btn btn-sm btn-outline-info" title="Details">
+                                <i class="bi bi-eye"></i>
+                            </a>
+
+                            @if (request.Status == LeaveRequestStatus.Pending)
+                            {
+                                <a asp-action="Edit" asp-route-id="@request.Id" class="btn btn-sm btn-outline-warning" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            }
+
+                            @if (request.Status == LeaveRequestStatus.Pending && canApprove)
+                            {
+                                <form asp-action="Approve" asp-route-id="@request.Id" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-success" title="Approve">
+                                        <i class="bi bi-check-lg"></i>
+                                    </button>
+                                </form>
+
+                                <form asp-action="Reject" asp-route-id="@request.Id" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Reject">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </form>
+                            }
+
+                            <a asp-action="Delete" asp-route-id="@request.Id" class="btn btn-sm btn-outline-secondary" title="Delete">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="text-center text-muted py-5">
+        <i class="bi bi-calendar-check fs-1 d-block mb-2"></i>
+        No leave requests found.
+    </div>
+}
+
+@section Styles {
+    <style>
+        .table > :not(caption) > * > * {
+            padding: 0.85rem 1rem;
+        }
+    </style>
+}
