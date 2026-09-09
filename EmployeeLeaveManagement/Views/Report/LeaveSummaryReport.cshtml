@@ -1,0 +1,46 @@
+﻿@model List<EmployeeLeaveManagementWeb.ViewModels.ReportVM.LeaveSummaryReportVM>
+
+@{
+    ViewData["Title"] = "Leave Summary Report";
+}
+
+@await Html.PartialAsync("_QuickLinksPartial")
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="fw-bold mb-0">Leave Summary Report</h1>
+    <a asp-action="LeaveSummaryReportPdf" class="btn btn-outline-danger">
+        <i class="bi bi-file-earmark-pdf me-1"></i> Export PDF
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Employee</th>
+                    <th>Department</th>
+                    <th>Total Requests</th>
+                    <th>Approved</th>
+                    <th>Rejected</th>
+                    <th>Pending</th>
+                    <th>Approved Days</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var v in Model)
+                {
+                    <tr>
+                        <td class="fw-semibold">@v.EmployeeName</td>
+                        <td>@v.DepartmentName</td>
+                        <td>@v.TotalRequests</td>
+                        <td><span class="badge bg-success-subtle text-success-emphasis">@v.ApprovedRequests</span></td>
+                        <td><span class="badge bg-danger-subtle text-danger-emphasis">@v.RejectedRequests</span></td>
+                        <td><span class="badge bg-warning-subtle text-warning-emphasis">@v.PendingRequests</span></td>
+                        <td class="fw-bold">@v.TotalApprovedDays</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

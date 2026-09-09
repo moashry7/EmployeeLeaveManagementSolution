@@ -2,6 +2,7 @@
 using EmployeeLeaveManagementBLL.Exceptions;
 using EmployeeLeaveManagementBLL.Services.Interfaces;
 using EmployeeLeaveManagementEntities.Entities;
+using EmployeeLeaveManagementEntities.Enums;
 using EmployeeLeaveManagementWeb.ViewModels.EmployeeVM;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EmployeeLeaveManagementWeb.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Manager")]
     public class EmployeeController : Controller
     {
         private readonly IEmployeeServices _employeeServices;
@@ -28,9 +29,34 @@ namespace EmployeeLeaveManagementWeb.Controllers
 
         #region Home paga
 
-        public async Task<IActionResult> Index(CancellationToken ct)
+        public async Task<IActionResult> Index(string? search, CancellationToken ct)
         {
-            var employees = await _employeeServices.GetAllAsync(ct);
+            var role = GetCurrentRole();
+
+            IEnumerable<Employee> employees;
+
+            if (role == EmployeeRole.Manager)
+            {
+                var currentId = GetCurrentEmployeeId();
+                var manager = await _employeeServices.GetByIdAsync(currentId, ct);
+                employees = manager == null
+                    ? Enumerable.Empty<Employee>()
+                    : await _employeeServices.GetByDepartmentAsync(manager.DepartmentId, ct);
+            }
+            else // Admin
+            {
+                employees = await _employeeServices.GetAllAsync(ct);
+            }
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                employees = employees.Where(e =>
+                    e.FullName.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                    e.Email.Contains(search, StringComparison.OrdinalIgnoreCase));
+            }
+
+            ViewData["CurrentSearch"] = search;
+
             var vm = _mapper.Map<IEnumerable<EmployeeListVM>>(employees);
             return View(vm);
         }
@@ -44,6 +70,14 @@ namespace EmployeeLeaveManagementWeb.Controllers
             if (employee is null)
                 return NotFound();
 
+            if (GetCurrentRole() == EmployeeRole.Manager)
+            {
+                var currentId = GetCurrentEmployeeId();
+                var manager = await _employeeServices.GetByIdAsync(currentId, ct);
+                if (manager == null || manager.DepartmentId != employee.DepartmentId)
+                    return Forbid();
+            }
+
             var vm = _mapper.Map<EmployeeDetailsVM>(employee);
             return View(vm);
         }
@@ -51,7 +85,7 @@ namespace EmployeeLeaveManagementWeb.Controllers
         #endregion
 
         #region Employee Create
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(CancellationToken ct)
         {
             var vm = new EmployeeCreateVM
@@ -61,7 +95,7 @@ namespace EmployeeLeaveManagementWeb.Controllers
             return View(vm);
         }
 
-        
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(EmployeeCreateVM vm, CancellationToken ct)
@@ -91,7 +125,7 @@ namespace EmployeeLeaveManagementWeb.Controllers
         #endregion        // GET: /Employee/Edit/5
 
         #region Employee Edit
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, CancellationToken ct)
         {
             var employee = await _employeeServices.GetByIdAsync(id, ct);
@@ -102,7 +136,7 @@ namespace EmployeeLeaveManagementWeb.Controllers
             vm.Departments = await GetDepartmentsSelectListAsync(ct);
             return View(vm);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, EmployeeEditVM vm, CancellationToken ct)
@@ -135,6 +169,7 @@ namespace EmployeeLeaveManagementWeb.Controllers
 
         #region Employee Delete
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id, CancellationToken ct)
         {
             var employee = await _employeeServices.GetByIdAsync(id, ct);
@@ -144,7 +179,7 @@ namespace EmployeeLeaveManagementWeb.Controllers
             var vm = _mapper.Map<EmployeeDetailsVM>(employee);
             return View(vm);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id, CancellationToken ct)
@@ -175,7 +210,18 @@ namespace EmployeeLeaveManagementWeb.Controllers
                 Value = d.Id.ToString(),
                 Text = d.Name
             });
-        } 
+        }
+        private int GetCurrentEmployeeId()
+        {
+            var idClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            return int.Parse(idClaim!);
+        }
+
+        private EmployeeRole GetCurrentRole()
+        {
+            var roleClaim = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+            return Enum.Parse<EmployeeRole>(roleClaim!);
+        }
         #endregion
 
     }

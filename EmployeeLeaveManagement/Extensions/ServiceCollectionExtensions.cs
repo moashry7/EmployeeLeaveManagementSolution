@@ -20,6 +20,7 @@ namespace EmployeeLeaveManagementWeb.Extensions
                    options.ExpireTimeSpan = TimeSpan.FromHours(8);
                    options.SlidingExpiration = true;
                });
+            QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 
 
 

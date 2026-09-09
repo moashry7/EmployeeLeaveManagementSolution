@@ -8,6 +8,7 @@ namespace EmployeeLeaveManagementWeb.MappingProfile
     {
         public EmployeeMappingProfile()
         {
+
             CreateMap<Employee, EmployeeListVM>()
                 .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Department.Name))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));

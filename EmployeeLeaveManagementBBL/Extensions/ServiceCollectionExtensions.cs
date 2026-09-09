@@ -13,7 +13,7 @@ namespace EmployeeLeaveManagementBLL.Extensions
             services.AddScoped<IDepartmentServices, DepartmentServices>();
             services.AddScoped<ILeaveTypeServices, LeaveTypeServices>();
             services.AddScoped<ILeaveRequestServices, LeaveRequestServices>();
-
+            services.AddScoped<IReportServices, ReportServices>();
             return services;
         }
     }

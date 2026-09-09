@@ -1,4 +1,9 @@
-﻿<div class="d-flex flex-wrap gap-2 mb-4">
+﻿@{
+    var currentRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+    var isAdmin = currentRole == "Admin";
+}
+
+<div class="d-flex flex-wrap gap-2 mb-4">
     <a asp-controller="Home" asp-action="Index" class="btn btn-outline-dark quick-link">
         <i class="bi bi-house-door-fill me-1"></i> Home
     </a>
@@ -14,4 +19,30 @@
     <a asp-controller="LeaveRequest" asp-action="Index" class="btn btn-outline-warning quick-link">
         <i class="bi bi-calendar-check me-1"></i> Leave Requests
     </a>
+
+    @if (isAdmin)
+    {
+        <div class="dropdown">
+            <button class="btn btn-outline-danger dropdown-toggle quick-link" type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-file-earmark-bar-graph me-1"></i> Reports
+            </button>
+            <ul class="dropdown-menu">
+                <li>
+                    <a class="dropdown-item" asp-controller="Report" asp-action="DepartmentReport">
+                        Department Budget
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-controller="Report" asp-action="LeaveSummaryReport">
+                        Leave Summary
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-controller="Report" asp-action="PendingApprovalsReport">
+                        Pending Approvals
+                    </a>
+                </li>
+            </ul>
+        </div>
+    }
 </div>
